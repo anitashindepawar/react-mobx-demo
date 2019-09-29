@@ -1,19 +1,42 @@
 import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react'
-import logo from './logo.svg';
 import './App.css';
 
-@inject('incomeDomainStore', 'incomeUiStore')
+@inject('AppStartStore', 'incomeUiStore')
 @observer
 class App extends Component {
+  handleChange=(e)=>{
+    const name = e.target.name;
+    const value = e.target.value;
+    this.props.AppStartStore.LookupObj[name]=value;
+  }
+
+  validateInput=(e)=>{
+    const name = e.target.name;
+    const value = e.target.value;
+    this.props.AppStartStore.validateInput(name,value);
+  }
+
+  handleNext=()=>{
+this.props.AppStartStore.stepNext();
+  }
+
+  handleBack=()=>{
+    this.props.AppStartStore.stepBack();
+  }
+
   render() {
     return (
       <div className="App">
         <header className="App-header">
-          <input type="text" onChange={event => this.props.incomeDomainStore.setIncome(event.target.value)} placeholder="Income" className="income-input"/>
-          <button type="button" onClick={() => this.props.incomeUiStore.showCalculation()} className="calculate-btn">Calculate</button>
-          {this.getCalculation()}
-          <img src={logo} className="App-logo" alt="logo" />
+          <p>First Name</p><input type="text" value={this.props.AppStartStore.LookupObj.firstname} name={'firstname'} 
+          onChange={this.handleChange} onBlur={this.validateInput}/>
+          <p>SurName</p><input type="text" value={this.props.AppStartStore.LookupObj.surname} name={'surname'} 
+          onChange={this.handleChange} onBlur={this.validateInput}/>
+          <p>address</p><input type="text" value={this.props.AppStartStore.LookupObj.address} name={'address'} 
+          onChange={this.handleChange} onBlur={this.validateInput}/>
+          <button type="button" onClick={this.handleNext} disabled={!this.props.AppStartStore.enableNextBtn}>Next</button>
+          <button type="button" onClick={this.handleBack} >Back</button>
         </header>
       </div>
     );
@@ -24,9 +47,9 @@ class App extends Component {
 
     return (
       <div>
-        <p>Income before tax: ${this.props.incomeDomainStore.incomeBeforeTax}.00</p>
-        <p>Tax percentage: {this.props.incomeDomainStore.calculatedTaxPercentage}%</p>
-        <p>Income after tax: ${this.props.incomeDomainStore.calculatedIncomeAfterTax}</p>
+        <p>Income before tax: ${this.props.AppStartStore.incomeBeforeTax}.00</p>
+        <p>Tax percentage: {this.props.AppStartStore.calculatedTaxPercentage}%</p>
+        <p>Income after tax: ${this.props.AppStartStore.calculatedIncomeAfterTax}</p>
       </div>
     )
   }
